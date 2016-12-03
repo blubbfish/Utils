@@ -17,5 +17,6 @@ namespace BlubbFish.Utils
             this.init();
         }
         abstract protected void init();
+        abstract public void Dispose();
     }
 }
