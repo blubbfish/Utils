@@ -52,7 +52,7 @@ namespace BlubbFish.Utils {
       this.file.Flush();
     }
     public void setLine(string text, DateTime d) {
-      this.setLine(d.ToString("[yyyy-MM-dd HH:mm:ss.ffff] " + text));
+      this.setLine(d.ToString("[yyyy-MM-dd HH:mm:ss.ffff] ") + text);
     }
   }
 }
