@@ -7,16 +7,16 @@ using System.Windows.Forms;
 
 namespace BlubbFish.Utils
 {
-    public abstract class OwnController
+  public abstract class OwnController
+  {
+    /// <summary>
+    /// Führt den Controller aus.
+    /// </summary>
+    public void Execute()
     {
-        /// <summary>
-        /// Führt den Controller aus.
-        /// </summary>
-        public void execute()
-        {
-            this.init();
-        }
-        abstract protected void init();
-        abstract public void Dispose();
+      this.Init();
     }
+    abstract protected void Init();
+    abstract public void Dispose();
+  }
 }

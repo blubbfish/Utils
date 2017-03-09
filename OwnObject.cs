@@ -3,34 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BlubbFish.Utils {
-  abstract public class OwnObject {
-    private List<Tuple<DateTime, string, string, LogLevel>> loglist = new List<Tuple<DateTime, string, string, LogLevel>>();
+namespace BlubbFish.Utils
+{
+  abstract public class OwnObject
+  {
+    private List<Tuple<DateTime, String, String, LogLevel>> loglist = new List<Tuple<DateTime, String, String, LogLevel>>();
 
-    public delegate void LogEvent(string location, string message, LogLevel level, DateTime date);
-    public enum LogLevel : int {
+    public delegate void LogEvent(String location, String message, LogLevel level, DateTime date);
+    public enum LogLevel : Int32
+    {
       Debug = 1,
       Notice = 2,
       Info = 4,
       Warn = 8,
       Error = 16
     }
-    
-    public event LogEvent eventDebug;
-    public event LogEvent eventNotice;
-    public event LogEvent eventInfo;
-    public event LogEvent eventWarn;
-    public event LogEvent eventError;
+
+    public event LogEvent EventDebug;
+    public event LogEvent EventNotice;
+    public event LogEvent EventInfo;
+    public event LogEvent EventWarn;
+    public event LogEvent EventError;
     public event LogEvent EventLog;
 
     /// <summary>
     /// Get the Complete Log
     /// </summary>
-    public List<string> getLog(LogLevel level, bool classNames, bool timeStamps) {
-      List<string> ret = new List<string>();
-      foreach(Tuple<DateTime, string, string, LogLevel> t in this.loglist) {
-        if(t.Item4 >= level) {
-          ret.Add(logToString(t.Item2, t.Item3, t.Item4, t.Item1, classNames, timeStamps));
+    public List<String> GetLog(LogLevel level, Boolean classNames, Boolean timeStamps)
+    {
+      List<String> ret = new List<String>();
+      foreach (Tuple<DateTime, String, String, LogLevel> t in this.loglist) {
+        if (t.Item4 >= level) {
+          ret.Add(LogToString(t.Item2, t.Item3, t.Item4, t.Item1, classNames, timeStamps));
         }
       }
       return ret;
@@ -39,34 +43,37 @@ namespace BlubbFish.Utils {
     /// <summary>
     /// Formates a LogMessage to a String
     /// </summary>
-    public static string logToString(string location, string message, LogLevel level, DateTime date, bool classNames, bool timeStamps) {
-      return (timeStamps ? "[" + date.ToString("R") + "]: "+level.ToString()+" " : "") + (classNames ? location + ", " : "") + message;
+    public static String LogToString(String location, String message, LogLevel level, DateTime date, Boolean classNames, Boolean timeStamps)
+    {
+      return (timeStamps ? "[" + date.ToString("R") + "]: " + level.ToString() + " " : "") + (classNames ? location + ", " : "") + message;
     }
 
-    protected void addLog(string location, string message, LogLevel level) {
-      this.addLog(location, message, level, DateTime.Now);
+    protected void AddLog(String location, String message, LogLevel level)
+    {
+      this.AddLog(location, message, level, DateTime.Now);
     }
 
-    protected void addLog(string location, string message, LogLevel level, DateTime date) {
-      if(eventDebug != null && level >= LogLevel.Debug) {
-        eventDebug(location, message, level, date);
+    protected void AddLog(String location, String message, LogLevel level, DateTime date)
+    {
+      if (EventDebug != null && level >= LogLevel.Debug) {
+        EventDebug(location, message, level, date);
       }
-      if(eventNotice != null && level >= LogLevel.Notice) {
-        eventNotice(location, message, level, date);
+      if (EventNotice != null && level >= LogLevel.Notice) {
+        EventNotice(location, message, level, date);
       }
-      if(eventInfo != null && level >= LogLevel.Info) {
-        eventInfo(location, message, level, date);
+      if (EventInfo != null && level >= LogLevel.Info) {
+        EventInfo(location, message, level, date);
       }
-      if(eventWarn != null && level >= LogLevel.Warn) {
-        eventWarn(location, message, level, date);
+      if (EventWarn != null && level >= LogLevel.Warn) {
+        EventWarn(location, message, level, date);
       }
-      if(eventError != null && level >= LogLevel.Error) {
-        eventError(location, message, level, date);
+      if (EventError != null && level >= LogLevel.Error) {
+        EventError(location, message, level, date);
       }
-      if(EventLog != null) {
+      if (EventLog != null) {
         EventLog(location, message, level, date);
       }
-      this.loglist.Add(new Tuple<DateTime, string, string, LogLevel>(date, location, message, level));
+      this.loglist.Add(new Tuple<DateTime, String, String, LogLevel>(date, location, message, level));
     }
   }
 }
