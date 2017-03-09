@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="CmdArgs.cs" />
     <Compile Include="FileLogger.cs" />
+    <Compile Include="FileMutex.cs" />
     <Compile Include="InIReader.cs" />
     <Compile Include="OwnController.cs" />
     <Compile Include="OwnModel.cs" />
