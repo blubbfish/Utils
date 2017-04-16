@@ -10,7 +10,7 @@ namespace BlubbFish.Utils
     private List<Tuple<DateTime, String, String, LogLevel>> loglist = new List<Tuple<DateTime, String, String, LogLevel>>();
 
     public delegate void LogEvent(String location, String message, LogLevel level, DateTime date);
-    public enum LogLevel : Int32
+    public enum LogLevel : int
     {
       Debug = 1,
       Notice = 2,
