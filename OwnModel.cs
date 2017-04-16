@@ -21,14 +21,18 @@ namespace BlubbFish.Utils
       return Activator.CreateInstance(typeof(T), true) as T;
     }
 
-    public void SetObserver(OwnView tray)
+    public void SetObserver(OwnView view)
     {
-      this.observer.Add(tray);
-      tray.Update();
+      this.observer.Add(view);
+      view.Update();
+    }
+
+    public void RemoveObserver(OwnView view) {
+      this.observer.Remove(view);
     }
     protected void Update()
     {
-      this.observer.ForEach(delegate (OwnView tray) { tray.Update(); });
+      this.observer.ForEach(delegate (OwnView view) { view.Update(); });
     }
     abstract protected void Init();
   }
