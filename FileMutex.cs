@@ -47,7 +47,10 @@ namespace BlubbFish.Utils
 
     public Boolean Delete()
     {
-      this.file.Close();
+      if(this.file != null) {
+        this.file.Close();
+      }
+
       File.Delete(this.filename);
       return !File.Exists(this.filename);
     }

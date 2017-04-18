@@ -10,8 +10,7 @@ namespace BlubbFish.Utils
     private List<Tuple<DateTime, String, String, LogLevel>> loglist = new List<Tuple<DateTime, String, String, LogLevel>>();
 
     public delegate void LogEvent(String location, String message, LogLevel level, DateTime date);
-    public enum LogLevel : int
-    {
+    public enum LogLevel : Int32 {
       Debug = 1,
       Notice = 2,
       Info = 4,
@@ -70,9 +69,7 @@ namespace BlubbFish.Utils
       if (EventError != null && level >= LogLevel.Error) {
         EventError(location, message, level, date);
       }
-      if (EventLog != null) {
-        EventLog(location, message, level, date);
-      }
+      EventLog?.Invoke(location, message, level, date);
       this.loglist.Add(new Tuple<DateTime, String, String, LogLevel>(date, location, message, level));
     }
   }
