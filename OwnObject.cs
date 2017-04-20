@@ -7,7 +7,7 @@ namespace BlubbFish.Utils
 {
   abstract public class OwnObject
   {
-    public class LogObject {
+    public struct LogObject {
       public LogObject(DateTime date, String location, String message, LogLevel level) {
         this.Date = date;
         this.Location = location;
