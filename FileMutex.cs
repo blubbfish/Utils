@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BlubbFish.Utils
 {
-  public class FileMutex
+  public class FileMutex : IDisposable
   {
     private static FileMutex instance;
     private String filename;
@@ -53,6 +53,19 @@ namespace BlubbFish.Utils
 
       File.Delete(this.filename);
       return !File.Exists(this.filename);
+    }
+
+    protected virtual void Dispose(Boolean disposing) {
+      if (disposing) {
+        if(this.file != null) {
+          this.file.Close();
+        }
+      }
+    }
+
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
   }
 }

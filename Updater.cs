@@ -6,7 +6,17 @@ namespace BlubbFish.Utils {
     private static Updater instances;
     private String url;
 
-    public delegate void UpdateStatus(Boolean hasUpdates, String message);
+    public class UpdaterEventArgs : EventArgs {
+      public UpdaterEventArgs(Boolean hasUpdates, String message) {
+        this.HasUpdates = hasUpdates;
+        this.Message = message;
+      }
+
+      public String Message { get; private set; }
+      public Boolean HasUpdates { get; private set; }
+    }
+
+    public delegate void UpdateStatus(Object sender, UpdaterEventArgs e);
 
     public event UpdateStatus UpdateResult;
 

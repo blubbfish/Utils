@@ -37,9 +37,23 @@ namespace BlubbFish.Utils
       }
     }
 
+    public class LogEventArgs : EventArgs {
+      public LogEventArgs(String location, String message, LogLevel level, DateTime date) {
+        this.Location = location;
+        this.Message = message;
+        this.Level = level;
+        this.Date = date;
+      }
+
+      public String Location { get; private set; }
+      public String Message { get; private set; }
+      public LogLevel Level { get; private set; }
+      public DateTime Date { get; private set; }
+    }
+
     private List<LogObject> loglist = new List<LogObject>();
 
-    public delegate void LogEvent(String location, String message, LogLevel level, DateTime date);
+    public delegate void LogEvent(Object sender, LogEventArgs e);
     public enum LogLevel : Int32 {
       Debug = 1,
       Notice = 2,
@@ -88,22 +102,23 @@ namespace BlubbFish.Utils
     /// <param name="date">Date of the message</param>
     protected void AddLog(String location, String message, LogLevel level, DateTime date)
     {
+      LogEventArgs e = new LogEventArgs(location, message, level, date);
       if (EventDebug != null && level >= LogLevel.Debug) {
-        EventDebug(location, message, level, date);
+        EventDebug(this, e);
       }
       if (EventNotice != null && level >= LogLevel.Notice) {
-        EventNotice(location, message, level, date);
+        EventNotice(this, e);
       }
       if (EventInfo != null && level >= LogLevel.Info) {
-        EventInfo(location, message, level, date);
+        EventInfo(this, e);
       }
       if (EventWarn != null && level >= LogLevel.Warn) {
-        EventWarn(location, message, level, date);
+        EventWarn(this, e);
       }
       if (EventError != null && level >= LogLevel.Error) {
-        EventError(location, message, level, date);
+        EventError(this, e);
       }
-      EventLog?.Invoke(location, message, level, date);
+      EventLog?.Invoke(this, e);
 
       this.loglist.Add(new LogObject(date, location, message, level));
     }

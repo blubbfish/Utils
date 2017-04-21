@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlubbFish.Utils
 {
-  public class InIReader
+  public class InIReader : IDisposable
   {
     private Dictionary<String, Dictionary<String, String>> cont;
     private FileSystemWatcher k = new FileSystemWatcher(Directory.GetCurrentDirectory(), "*.ini");
@@ -170,6 +170,16 @@ namespace BlubbFish.Utils
       this.cont.Remove(name);
       this.Changed();
       return false;
+    }
+    protected virtual void Dispose(Boolean disposing) {
+      if (disposing) {
+        this.k.Dispose();
+      }
+    }
+
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
   }
 }
