@@ -4,21 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlubbFish.Utils
-{
-  public abstract class OwnView
-  {
+namespace BlubbFish.Utils {
+  public abstract class OwnView {
+
+    protected OwnView() {
+      this.Init();
+    }
     /// <summary>
     /// Called if the Oberver (Model) updates its View
     /// </summary>
-    abstract public void Update();
+    public abstract void Update();
     /// <summary>
     /// Called if view is viewed
     /// </summary>
-    abstract protected void Init();
+    protected abstract void Init();
     /// <summary>
     /// Called if Form is Disposed
     /// </summary>
-    abstract public void Dispose();
+    public abstract void Dispose();
   }
 }

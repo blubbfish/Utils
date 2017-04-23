@@ -1,10 +1,12 @@
 ﻿
 using System;
+using System.IO;
 
 namespace BlubbFish.Utils {
-  public class Updater {
+  public class Updater : OwnObject {
     private static Updater instances;
     private String url;
+    private String[] versions;
 
     public class UpdaterEventArgs : EventArgs {
       public UpdaterEventArgs(Boolean hasUpdates, String message) {
@@ -45,8 +47,18 @@ namespace BlubbFish.Utils {
     /// Set Path to check for Updates
     /// </summary>
     /// <param name="url">HTTP URI</param>
-    public void SetPath(String url) {
+    public void SetPath(String url, String[] versions) {
       this.url = url;
+      this.versions = versions;
+      StreamWriter file = new StreamWriter("version.txt");
+      file.BaseStream.SetLength(0);
+      file.BaseStream.Flush();
+      file.BaseStream.Seek(0, SeekOrigin.Begin);
+      foreach (String version in versions) {
+        file.WriteLine(version);
+      }
+      file.Flush();
+      file.Close();
     }
 
     /// <summary>
@@ -56,6 +68,9 @@ namespace BlubbFish.Utils {
     public void Check() {
       if(this.url == "") {
         throw new ArgumentException("You must set url first.");
+      }
+      if(this.versions.Length == 0) {
+        throw new ArgumentException("You must set a Version number first.");
       }
       if(this.UpdateResult == null) {
         throw new ArgumentNullException("You must attach an event first.");
