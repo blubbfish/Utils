@@ -1,12 +1,18 @@
 ﻿
 using System;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Xml;
 
 namespace BlubbFish.Utils {
   public class Updater : OwnObject {
     private static Updater instances;
     private String url;
-    private String[] versions;
+    private VersionInfo[] versions;
 
     public class UpdaterEventArgs : EventArgs {
       public UpdaterEventArgs(Boolean hasUpdates, String message) {
@@ -16,6 +22,26 @@ namespace BlubbFish.Utils {
 
       public String Message { get; private set; }
       public Boolean HasUpdates { get; private set; }
+    }
+
+    public struct VersionInfo {
+      public VersionInfo(String name, String version, String filename, String guid) {
+        this.Name = name;
+        this.Version = version;
+        this.Filename = filename;
+        this.GUID = guid;
+      }
+      public VersionInfo(Type type) {
+        this.Name = type.Assembly.GetName().Name;
+        this.Version = type.Assembly.GetName().Version.ToString();
+        this.Filename = type.Assembly.ManifestModule.Name;
+        this.GUID = ((GuidAttribute)type.Assembly.GetCustomAttribute(typeof(GuidAttribute))).Value;
+      }
+
+      public String Name { get; private set; }
+      public String Version { get; private set; }
+      public String Filename { get; private set; }
+      public String GUID { get; private set; }
     }
 
     public delegate void UpdateStatus(Object sender, UpdaterEventArgs e);
@@ -47,16 +73,27 @@ namespace BlubbFish.Utils {
     /// Set Path to check for Updates
     /// </summary>
     /// <param name="url">HTTP URI</param>
-    public void SetPath(String url, String[] versions) {
+    public void SetUpdateInfo(String url, VersionInfo[] versions) {
       this.url = url;
       this.versions = versions;
-      StreamWriter file = new StreamWriter("version.txt");
-      file.BaseStream.SetLength(0);
-      file.BaseStream.Flush();
-      file.BaseStream.Seek(0, SeekOrigin.Begin);
-      foreach (String version in versions) {
-        file.WriteLine(version);
+      FileStream file = new FileStream("version.xml",FileMode.Create);
+      XmlTextWriter xml = new XmlTextWriter(file, Encoding.UTF8);
+      xml.WriteStartDocument();
+      xml.WriteWhitespace("\n");
+      xml.WriteStartElement("filelist");
+      xml.WriteWhitespace("\n");
+      foreach (VersionInfo version in versions) {
+        xml.WriteWhitespace("\t");
+        xml.WriteStartElement("file");
+        xml.WriteAttributeString("Version", version.Version);
+        xml.WriteAttributeString("Filename", version.Filename);
+        xml.WriteAttributeString("GUID", version.GUID);
+        xml.WriteString(version.Name);
+        xml.WriteEndElement();
+        xml.WriteWhitespace("\n");
       }
+      xml.WriteEndElement();
+      xml.Flush();
       file.Flush();
       file.Close();
     }
@@ -75,6 +112,23 @@ namespace BlubbFish.Utils {
       if(this.UpdateResult == null) {
         throw new ArgumentNullException("You must attach an event first.");
       }
+      Thread t = new Thread(this.Runner);
+      t.Start();
+    }
+
+    private void Runner() {
+      Thread.Sleep(1000);
+      WebRequest request = WebRequest.Create(this.url + "version.xml");
+      WebResponse response = null;
+      try {
+         response = request.GetResponse();
+      } catch(WebException e) {
+        this.UpdateResult(this, new UpdaterEventArgs(false, e.Message));
+        return;
+      }
+      Stream stream = response.GetResponseStream();
+      StreamReader reader = new StreamReader(stream);
+      String content = reader.ReadToEnd();
     }
 
     /// <summary>
@@ -84,7 +138,7 @@ namespace BlubbFish.Utils {
     /// <param name="url">The url of the sourcefile</param>
     /// <param name="afterExit">Updates the Programm after it has been closed</param>
     /// <returns></returns>
-    public Boolean Update(String filename, String url, Boolean afterExit = true) {
+    public Boolean Update(Boolean afterExit = true) {
       return true;
     }
   }
