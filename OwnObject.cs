@@ -37,20 +37,6 @@ namespace BlubbFish.Utils
       }
     }
 
-    public class LogEventArgs : EventArgs {
-      public LogEventArgs(String location, String message, LogLevel level, DateTime date) {
-        this.Location = location;
-        this.Message = message;
-        this.Level = level;
-        this.Date = date;
-      }
-
-      public String Location { get; private set; }
-      public String Message { get; private set; }
-      public LogLevel Level { get; private set; }
-      public DateTime Date { get; private set; }
-    }
-
     private List<LogObject> loglist = new List<LogObject>();
 
     public delegate void LogEvent(Object sender, LogEventArgs e);

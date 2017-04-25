@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdArgs.cs" />
+    <Compile Include="EventArgsHelper.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="FileMutex.cs" />
     <Compile Include="InIReader.cs" />

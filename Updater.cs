@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -13,40 +14,29 @@ namespace BlubbFish.Utils {
     private static Updater instances;
     private String url;
     private VersionInfo[] versions;
-
-    public class UpdaterEventArgs : EventArgs {
-      public UpdaterEventArgs(Boolean hasUpdates, String message) {
-        this.HasUpdates = hasUpdates;
-        this.Message = message;
-      }
-
-      public String Message { get; private set; }
-      public Boolean HasUpdates { get; private set; }
-    }
+    private Thread t;
 
     public struct VersionInfo {
-      public VersionInfo(String name, String version, String filename, String guid) {
-        this.Name = name;
-        this.Version = version;
-        this.Filename = filename;
-        this.GUID = guid;
-      }
       public VersionInfo(Type type) {
         this.Name = type.Assembly.GetName().Name;
         this.Version = type.Assembly.GetName().Version.ToString();
         this.Filename = type.Assembly.ManifestModule.Name;
         this.GUID = ((GuidAttribute)type.Assembly.GetCustomAttribute(typeof(GuidAttribute))).Value;
+        this.HasUpdate = false;
       }
 
       public String Name { get; private set; }
       public String Version { get; private set; }
       public String Filename { get; private set; }
       public String GUID { get; private set; }
+      public Boolean HasUpdate { get; set; }
     }
 
     public delegate void UpdateStatus(Object sender, UpdaterEventArgs e);
+    public delegate void UpdateFail(Object sender, UpdaterFailEventArgs e);
 
     public event UpdateStatus UpdateResult;
+    public event UpdateFail ErrorRaised;
 
     private Updater() { }
 
@@ -66,7 +56,7 @@ namespace BlubbFish.Utils {
     /// Waits for the Result of the Updater thread.
     /// </summary>
     public void WaitForExit() {
-      throw new NotImplementedException();
+      while (this.t.ThreadState == ThreadState.Running) { }
     }
 
     /// <summary>
@@ -104,41 +94,58 @@ namespace BlubbFish.Utils {
     /// <exception cref="ArgumentException"></exception>
     public void Check() {
       if(this.url == "") {
-        throw new ArgumentException("You must set url first.");
+        throw new ArgumentException("Zuerst eine URL setzen!");
       }
       if(this.versions.Length == 0) {
-        throw new ArgumentException("You must set a Version number first.");
+        throw new ArgumentException("Zuerst Dateien registrieren!");
       }
       if(this.UpdateResult == null) {
-        throw new ArgumentNullException("You must attach an event first.");
+        throw new ArgumentNullException("Zuerst das Update Event anhängen.");
       }
-      Thread t = new Thread(this.Runner);
-      t.Start();
+      this.t = new Thread(this.Runner);
+      this.t.Start();
     }
 
     private void Runner() {
-      Thread.Sleep(1000);
-      WebRequest request = WebRequest.Create(this.url + "version.xml");
-      WebResponse response = null;
+      Thread.Sleep(1);
       try {
-         response = request.GetResponse();
-      } catch(WebException e) {
-        this.UpdateResult(this, new UpdaterEventArgs(false, e.Message));
+        Stream stream = WebRequest.Create(this.url + "version.xml").GetResponse().GetResponseStream();
+        String content = new StreamReader(stream).ReadToEnd();
+        List<VersionInfo> updates = new List<VersionInfo>();
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml(content);
+        foreach (XmlNode node in doc.DocumentElement.ChildNodes) {
+          String guid = node.Attributes["GUID"].Value;
+          String version = node.Attributes["Version"].Value;
+          for(Int32 i=0;i<this.versions.Length;i++) {
+            if (this.versions[i].GUID == guid && this.versions[i].Version != version) {
+              this.versions[i].HasUpdate = true;
+            }
+          }
+        }
+        if (updates.Count > 0) {
+          this.UpdateResult(this, new UpdaterEventArgs(true, "Update verfügbar"));
+          return;
+        }
+      } catch (Exception e) {
+        this.ErrorRaised?.Invoke(this, new UpdaterFailEventArgs(e));
         return;
       }
-      Stream stream = response.GetResponseStream();
-      StreamReader reader = new StreamReader(stream);
-      String content = reader.ReadToEnd();
+      this.UpdateResult(this, new UpdaterEventArgs(false, "Kein Update verfügbar"));
     }
 
     /// <summary>
     /// Update the file
     /// </summary>
-    /// <param name="filename">The filename of the targetfile</param>
-    /// <param name="url">The url of the sourcefile</param>
     /// <param name="afterExit">Updates the Programm after it has been closed</param>
     /// <returns></returns>
     public Boolean Update(Boolean afterExit = true) {
+      try {
+
+      } catch(Exception e) {
+        this.ErrorRaised?.Invoke(this, new UpdaterFailEventArgs(e));
+        return false;
+      }
       return true;
     }
   }

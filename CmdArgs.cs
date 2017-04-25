@@ -12,7 +12,7 @@ namespace BlubbFish.Utils
       Touple
     }
     #region Classes
-    public class VaildArguments
+    public struct VaildArguments
     {
       public VaildArguments(ArgLength length, Boolean required)
       {
@@ -28,7 +28,7 @@ namespace BlubbFish.Utils
       public ArgLength Length { get; private set; }
       public Boolean Required { get; private set; }
     }
-    private class ArgTouple
+    private struct ArgTouple
     {
       public ArgTouple(String type, String data)
       {
@@ -38,6 +38,7 @@ namespace BlubbFish.Utils
       public ArgTouple(String type)
       {
         this.Type = type;
+        this.Data = "";
       }
       public String Type { get; private set; }
       public String Data { get; private set; }
