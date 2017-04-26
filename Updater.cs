@@ -111,7 +111,7 @@ namespace BlubbFish.Utils {
       try {
         Stream stream = WebRequest.Create(this.url + "version.xml").GetResponse().GetResponseStream();
         String content = new StreamReader(stream).ReadToEnd();
-        List<VersionInfo> updates = new List<VersionInfo>();
+        Boolean update = false;
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(content);
         foreach (XmlNode node in doc.DocumentElement.ChildNodes) {
@@ -120,10 +120,11 @@ namespace BlubbFish.Utils {
           for(Int32 i=0;i<this.versions.Length;i++) {
             if (this.versions[i].GUID == guid && this.versions[i].Version != version) {
               this.versions[i].HasUpdate = true;
+              update = true;
             }
           }
         }
-        if (updates.Count > 0) {
+        if (update) {
           this.UpdateResult(this, new UpdaterEventArgs(true, "Update verfügbar"));
           return;
         }
@@ -141,12 +142,32 @@ namespace BlubbFish.Utils {
     /// <returns></returns>
     public Boolean Update(Boolean afterExit = true) {
       try {
-
-      } catch(Exception e) {
+        if (afterExit) {
+          this.UpdateAfter();
+        } else {
+          this.UpdateNow();
+        }
+      } catch (Exception e) {
         this.ErrorRaised?.Invoke(this, new UpdaterFailEventArgs(e));
         return false;
       }
       return true;
+    }
+
+    private void UpdateAfter() {
+      this.UpdateNow(true);
+    }
+
+    private void UpdateNow(Boolean forAfter = false) {
+      foreach (VersionInfo file in this.versions) {
+        if (file.HasUpdate) {
+          Stream stream = WebRequest.Create(this.url + file.Filename).GetResponse().GetResponseStream();
+          FileStream target = new FileStream(file.Filename + (forAfter ? "_" : ""), FileMode.Create);
+          stream.CopyTo(target);
+          target.Flush();
+          target.Close();
+        }
+      }
     }
   }
 }
