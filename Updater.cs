@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -55,8 +54,13 @@ namespace BlubbFish.Utils {
     /// <summary>
     /// Waits for the Result of the Updater thread.
     /// </summary>
-    public void WaitForExit() {
+    public void WaitForExit(Boolean exceuteUpdate = true) {
       while (this.t.ThreadState == ThreadState.Running) { }
+      if(exceuteUpdate) {
+        if(File.Exists("update.bat")) {
+          System.Diagnostics.Process.Start("update.bat");
+        }
+      }
     }
 
     /// <summary>
@@ -107,7 +111,7 @@ namespace BlubbFish.Utils {
     }
 
     private void Runner() {
-      Thread.Sleep(1);
+      Thread.Sleep(1000);
       try {
         Stream stream = WebRequest.Create(this.url + "version.xml").GetResponse().GetResponseStream();
         String content = new StreamReader(stream).ReadToEnd();
@@ -156,6 +160,21 @@ namespace BlubbFish.Utils {
 
     private void UpdateAfter() {
       this.UpdateNow(true);
+      StreamWriter update = new StreamWriter("update.bat", false);
+      update.WriteLine("echo off");
+      update.WriteLine("echo \"Warte 10s\"");
+      update.WriteLine("ping 127.0.0.1 -n 10");
+      update.WriteLine("echo \"Kopiere Dateien....\"");
+      foreach (VersionInfo file in this.versions) {
+        if (file.HasUpdate) {
+          update.WriteLine("echo \"Kopiere " + file.Filename + "\"");
+          update.WriteLine("del " + file.Filename);
+          update.WriteLine("move " + file.Filename + "_ " + file.Filename);
+        }
+      }
+      update.WriteLine("start cmd /C ping 127.0.0.1 -n 10 & del update.bat");
+      update.Flush();
+      update.Close();
     }
 
     private void UpdateNow(Boolean forAfter = false) {
