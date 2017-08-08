@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace BlubbFish.Utils {
   public abstract class OwnView {
 
-    protected OwnView() {
-      this.Init();
-    }
+    protected OwnView() { }
     /// <summary>
     /// Called if the Oberver (Model) updates its View
     /// </summary>
@@ -17,7 +15,7 @@ namespace BlubbFish.Utils {
     /// <summary>
     /// Called if view is viewed
     /// </summary>
-    protected abstract void Init();
+    //protected abstract void Init();
     /// <summary>
     /// Called if Form is Disposed
     /// </summary>

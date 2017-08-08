@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace BlubbFish.Utils {
   public class UpdaterEventArgs : EventArgs {
