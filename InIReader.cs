@@ -77,6 +77,13 @@ namespace BlubbFish.Utils
       return this.cont.Keys.ToList<String>();
     }
 
+    public Dictionary<String, String> GetSection(String section) {
+      if(this.cont.Keys.Contains(section)) {
+        return this.cont[section];
+      }
+      return new Dictionary<string, string>();
+    }
+
     public String GetValue(String section, String key)
     {
       if (!section.StartsWith("[")) {
