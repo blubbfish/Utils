@@ -52,7 +52,7 @@ namespace BlubbFish.Utils
       Dictionary<String, String> sub = new Dictionary<String, String>();
       String cap = "";
       foreach (String line in buf) {
-        Match match = Regex.Match(line, @"^\[[a-zA-Z0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase);
+        Match match = Regex.Match(line, @"^\[[a-zA-ZäöüÄÖÜ0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase);
         if (match.Success) {
           if (sub.Count != 0 && cap != "") {
             this.cont.Add(cap, sub);
