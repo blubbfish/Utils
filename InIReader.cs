@@ -74,14 +74,17 @@ namespace BlubbFish.Utils
 
     public List<String> GetSections()
     {
-      return this.cont.Keys.ToList<String>();
+      return this.cont.Keys.ToList();
     }
 
     public Dictionary<String, String> GetSection(String section) {
       if(this.cont.Keys.Contains(section)) {
         return this.cont[section];
       }
-      return new Dictionary<string, string>();
+      if(this.cont.Keys.Contains("["+section+"]")) {
+        return this.cont["[" + section + "]"];
+      }
+      return new Dictionary<String, String>();
     }
 
     public String GetValue(String section, String key)
