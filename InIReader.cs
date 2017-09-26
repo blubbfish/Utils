@@ -10,7 +10,7 @@ namespace BlubbFish.Utils
 {
   public class InIReader : IDisposable
   {
-    private Dictionary<String, Dictionary<String, String>> cont;
+    private Dictionary<String, Dictionary<String, String>> inifile;
     private FileSystemWatcher k = new FileSystemWatcher(Directory.GetCurrentDirectory(), "*.ini");
     private String filename;
 
@@ -38,7 +38,7 @@ namespace BlubbFish.Utils
 
     private void LoadFile()
     {
-      this.cont = new Dictionary<String, Dictionary<String, String>>();
+      this.inifile = new Dictionary<String, Dictionary<String, String>>();
       StreamReader file = new StreamReader(this.filename);
       List<String> buf = new List<String>();
       String fline = "";
@@ -55,7 +55,7 @@ namespace BlubbFish.Utils
         Match match = Regex.Match(line, @"^\[[a-zA-ZäöüÄÖÜ0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase);
         if (match.Success) {
           if (sub.Count != 0 && cap != "") {
-            this.cont.Add(cap, sub);
+            this.inifile.Add(cap, sub);
           }
           cap = line;
           sub = new Dictionary<String, String>();
@@ -68,21 +68,29 @@ namespace BlubbFish.Utils
         }
       }
       if (sub.Count != 0 && cap != "") {
-        this.cont.Add(cap, sub);
+        this.inifile.Add(cap, sub);
       }
     }
 
-    public List<String> GetSections()
+    public List<String> GetSections(Boolean withBrackets = true)
     {
-      return this.cont.Keys.ToList();
+      if(withBrackets) {
+        return this.inifile.Keys.ToList();
+      } else {
+        List<String> ret = new List<String>();
+        foreach (String item in this.inifile.Keys) {
+          ret.Add(item.Substring(1, item.Length - 2));
+        }
+        return ret;
+      }
     }
 
     public Dictionary<String, String> GetSection(String section) {
-      if(this.cont.Keys.Contains(section)) {
-        return this.cont[section];
+      if(this.inifile.Keys.Contains(section)) {
+        return this.inifile[section];
       }
-      if(this.cont.Keys.Contains("["+section+"]")) {
-        return this.cont["[" + section + "]"];
+      if(this.inifile.Keys.Contains("["+section+"]")) {
+        return this.inifile["[" + section + "]"];
       }
       return new Dictionary<String, String>();
     }
@@ -92,9 +100,9 @@ namespace BlubbFish.Utils
       if (!section.StartsWith("[")) {
         section = "[" + section + "]";
       }
-      if (this.cont.Keys.Contains(section)) {
-        if (this.cont[section].Keys.Contains(key)) {
-          return this.cont[section][key];
+      if (this.inifile.Keys.Contains(section)) {
+        if (this.inifile[section].Keys.Contains(key)) {
+          return this.inifile[section][key];
         }
       }
       return null;
@@ -106,17 +114,17 @@ namespace BlubbFish.Utils
       if (!section.StartsWith("[")) {
         section = "[" + section + "]";
       }
-      if (this.cont.Keys.Contains(section)) {
-        if (this.cont[section].Keys.Contains(key)) {
-          this.cont[section][key] = value;
+      if (this.inifile.Keys.Contains(section)) {
+        if (this.inifile[section].Keys.Contains(key)) {
+          this.inifile[section][key] = value;
         } else {
-          this.cont[section].Add(key, value);
+          this.inifile[section].Add(key, value);
         }
       } else {
         Dictionary<String, String> sub = new Dictionary<String, String> {
           { key, value }
         };
-        this.cont.Add(section, sub);
+        this.inifile.Add(section, sub);
       }
       this.Changed();
     }
@@ -135,7 +143,7 @@ namespace BlubbFish.Utils
       file.BaseStream.SetLength(0);
       file.BaseStream.Flush();
       file.BaseStream.Seek(0, SeekOrigin.Begin);
-      foreach (KeyValuePair<String, Dictionary<String, String>> cap in this.cont) {
+      foreach (KeyValuePair<String, Dictionary<String, String>> cap in this.inifile) {
         file.WriteLine(cap.Key);
         foreach (KeyValuePair<String, String> sub in cap.Value) {
           file.WriteLine(sub.Key + "=" + sub.Value);
@@ -156,10 +164,10 @@ namespace BlubbFish.Utils
       if (!name.StartsWith("[")) {
         name = "[" + name + "]";
       }
-      if (this.cont.Keys.Contains(name)) {
+      if (this.inifile.Keys.Contains(name)) {
         return false;
       }
-      this.cont.Add(name, new Dictionary<String, String>());
+      this.inifile.Add(name, new Dictionary<String, String>());
       this.Changed();
       return true;
     }
@@ -174,10 +182,10 @@ namespace BlubbFish.Utils
       if (!name.StartsWith("[")) {
         name = "[" + name + "]";
       }
-      if (!this.cont.Keys.Contains(name)) {
+      if (!this.inifile.Keys.Contains(name)) {
         return false;
       }
-      this.cont.Remove(name);
+      this.inifile.Remove(name);
       this.Changed();
       return false;
     }
