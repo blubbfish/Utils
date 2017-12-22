@@ -23,6 +23,11 @@ namespace BlubbFish.Utils
       LoadFile();
     }
 
+    /// <summary>
+    /// Gibt eine InIReader-Instanz zu einer Datei zurück
+    /// </summary>
+    /// <param name="filename">Dateiname</param>
+    /// <returns></returns>
     public static InIReader GetInstance(String filename)
     {
       if (!instances.Keys.Contains(filename)) {
@@ -72,6 +77,11 @@ namespace BlubbFish.Utils
       }
     }
 
+    /// <summary>
+    /// Gibt eine Liste an Sektionen zurück
+    /// </summary>
+    /// <param name="withBrackets">Default = true; false, wenn die Liste ohne Klammern sein soll.</param>
+    /// <returns></returns>
     public List<String> GetSections(Boolean withBrackets = true)
     {
       if(withBrackets) {
@@ -85,6 +95,24 @@ namespace BlubbFish.Utils
       }
     }
 
+    /// <summary>
+    /// Überschreibt eine InI-Datei mit der Kompletten neuen Configuration
+    /// </summary>
+    /// <param name="config">Neue Konfiguration</param>
+    public void SetSections(Dictionary<String, Dictionary<String, String>> config) {
+      this.inifile.Clear();
+      foreach (KeyValuePair<String, Dictionary<String, String>> item in config) {
+        String key = item.Key;
+        if(!key.StartsWith("[")) {
+          key = "[" + key + "]";
+        }
+        if (Regex.Match(key, @"^\[[a-zA-ZäöüÄÖÜ0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase).Success) {
+          this.inifile.Add(key, item.Value);
+        }
+      }
+      this.Changed();
+    }
+
     public Dictionary<String, String> GetSection(String section) {
       if(this.inifile.Keys.Contains(section)) {
         return this.inifile[section];
@@ -95,6 +123,12 @@ namespace BlubbFish.Utils
       return new Dictionary<String, String>();
     }
 
+    /// <summary>
+    /// Gibt einen einzelnen Wert zurück
+    /// </summary>
+    /// <param name="section">Name der Sektion</param>
+    /// <param name="key">Name des Wertes</param>
+    /// <returns></returns>
     public String GetValue(String section, String key)
     {
       if (!section.StartsWith("[")) {
@@ -108,7 +142,12 @@ namespace BlubbFish.Utils
       return null;
     }
 
-
+    /// <summary>
+    /// Setzt einen Wert in einer Sektion
+    /// </summary>
+    /// <param name="section">Name der Sektion</param>
+    /// <param name="key">Name des Wertes</param>
+    /// <param name="value">Wert</param>
     public void SetValue(String section, String key, String value)
     {
       if (!section.StartsWith("[")) {
