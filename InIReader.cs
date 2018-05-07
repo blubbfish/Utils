@@ -2,23 +2,57 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace BlubbFish.Utils
-{
+namespace BlubbFish.Utils {
   public class InIReader : IDisposable
   {
     private Dictionary<String, Dictionary<String, String>> inifile;
-    private FileSystemWatcher k = new FileSystemWatcher(Directory.GetCurrentDirectory(), "*.ini");
+    private FileSystemWatcher k;
     private String filename;
+    private static List<String> search_path = new List<String>() {
+      Directory.GetCurrentDirectory()
+    };
 
     private static Dictionary<String, InIReader> instances = new Dictionary<String, InIReader>();
 
+    public static void SetSearchPath(List<String> directorys) {
+      search_path.AddRange(directorys);
+    }
+
+    public static Boolean ConfigExist(String filename) {
+      foreach (String path in search_path) {
+        if (File.Exists(path + Path.DirectorySeparatorChar + filename)) {
+          return true;
+        } else if (File.Exists(path + Path.DirectorySeparatorChar + filename + ".ini")) {
+          return true;
+        } else if (File.Exists(path + Path.DirectorySeparatorChar + filename + ".conf")) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     private InIReader(String filename)
     {
-      this.filename = filename;
+      foreach (String path in search_path) {
+        if (File.Exists(path + Path.DirectorySeparatorChar + filename)) {
+          this.filename = path + Path.DirectorySeparatorChar + filename;
+          this.k = new FileSystemWatcher(path, filename);
+          break;
+        } else if (File.Exists(path + Path.DirectorySeparatorChar + filename + ".ini")) {
+          this.filename = path + Path.DirectorySeparatorChar + filename + ".ini";
+          this.k = new FileSystemWatcher(path, filename + ".ini");
+          break;
+        } else if(File.Exists(path + Path.DirectorySeparatorChar + filename + ".conf")) {
+          this.filename = path + Path.DirectorySeparatorChar + filename + ".conf";
+          this.k = new FileSystemWatcher(path, filename + ".conf");
+          break;
+        }
+      }
+      if(this.filename == null) {
+        throw new ArgumentException(filename + " not found!");
+      }
       this.k.Changed += new FileSystemEventHandler(this.ReadAgain);
       LoadFile();
     }
