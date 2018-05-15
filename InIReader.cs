@@ -9,7 +9,7 @@ namespace BlubbFish.Utils {
   {
     private Dictionary<String, Dictionary<String, String>> inifile;
     private FileSystemWatcher k;
-    private String filename;
+    private readonly String filename;
     private static List<String> search_path = new List<String>() {
       Directory.GetCurrentDirectory()
     };

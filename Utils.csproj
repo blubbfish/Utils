@@ -50,6 +50,7 @@
     <Compile Include="OwnModel.cs" />
     <Compile Include="OwnObject.cs" />
     <Compile Include="OwnView.cs" />
+    <Compile Include="ProgramLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Updater.cs" />
   </ItemGroup>

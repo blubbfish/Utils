@@ -11,7 +11,7 @@ namespace BlubbFish.Utils
   {
     private static Dictionary<String, FileLogger> instances = new Dictionary<String, FileLogger>();
     private static String logDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
-    private StreamWriter file;
+    private readonly StreamWriter file;
     private FileLogger(String filename, Boolean append)
     {
       filename = logDir + filename;
