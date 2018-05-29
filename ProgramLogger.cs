@@ -64,6 +64,8 @@ namespace BlubbFish.Utils {
       this.fw.Close();
       if(new FileInfo(this.loggerfile).Length > 0) {
         File.Move(this.loggerfile, file);
+      } else {
+        File.Delete(this.loggerfile);
       }
       this.loggerfile = file;
       this.fw = new FileWriter(this.loggerfile);
