@@ -8,7 +8,7 @@ namespace BlubbFish.Utils {
   public class InIReader : IDisposable
   {
     private Dictionary<String, Dictionary<String, String>> inifile;
-    private FileSystemWatcher k;
+    private readonly FileSystemWatcher k;
     private readonly String filename;
     private static List<String> search_path = new List<String>() {
       Directory.GetCurrentDirectory()
