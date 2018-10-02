@@ -38,7 +38,7 @@ namespace BlubbFish.Utils
       public ArgTouple(String type)
       {
         this.Type = type;
-        this.Data = "";
+        this.Data = null;
       }
       public String Type { get; private set; }
       public String Data { get; private set; }
@@ -100,7 +100,8 @@ namespace BlubbFish.Utils
             if (this.args.Length > i + 1) {
               arg.SetData(this.args[++i]);
             } else {
-              throw new ArgumentException();
+              Console.WriteLine(this.GetUsageList(""));
+              throw new ArgumentException("Argument: "+this.args[i]+" missing second argument.");
             }
           }
           this.argList.Add(arg);
@@ -142,11 +143,9 @@ namespace BlubbFish.Utils
       foreach (ArgTouple t in this.argList) {
         if (t.Type == name && t.Data != null) {
           return t.Data;
-        } else {
-          throw new ArgumentNullException();
         }
       }
-      return null;
+      throw new ArgumentNullException();
     }
 
     public Boolean HasAllRequiredArguments()
