@@ -91,7 +91,7 @@ namespace BlubbFish.Utils {
       Dictionary<String, String> sub = new Dictionary<String, String>();
       String cap = "";
       foreach (String line in buf) {
-        Match match = Regex.Match(line, @"^\[[a-zA-ZäöüÄÖÜ0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase);
+        Match match = Regex.Match(line, @"^\[[a-zA-ZäöüÄÖÜ0-9\-\._/ ]+\]\w*$", RegexOptions.IgnoreCase);
         if (match.Success) {
           if (sub.Count != 0 && cap != "") {
             this.inifile.Add(cap, sub);
@@ -140,7 +140,7 @@ namespace BlubbFish.Utils {
         if(!key.StartsWith("[")) {
           key = "[" + key + "]";
         }
-        if (Regex.Match(key, @"^\[[a-zA-ZäöüÄÖÜ0-9\-_ ]+\]\w*$", RegexOptions.IgnoreCase).Success) {
+        if (Regex.Match(key, @"^\[[a-zA-ZäöüÄÖÜ0-9\-\._/ ]+\]\w*$", RegexOptions.IgnoreCase).Success) {
           this.inifile.Add(key, item.Value);
         }
       }
