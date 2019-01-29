@@ -108,10 +108,15 @@ namespace BlubbFish.Utils {
     }
 
     private void WriteLine(String value, TextWriter origstream, ConsoleWriterEventArgs.ConsoleType type) {
-      String text = "[" + DateTime.Now.ToString("o") + "]-" + type.ToString() + ": " + value;
+      String text = "";
+      if (this.newline) {
+        text = "[" + DateTime.Now.ToString("o") + "]-" + type.ToString() + ": " + value;
+      } else {
+        text = value;
+      }
+      this.newline = true;
       origstream.WriteLine(text);
       base.WriteLine(text);
-      this.newline = true;
       base.Flush();
     }
 
