@@ -20,9 +20,6 @@
     <PackageReleaseNotes>1.4.0 Add Helper to Utils</PackageReleaseNotes>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
   <ItemGroup>
 	<Content Include="../CONTRIBUTING.md" />
 	<Content Include="../LICENSE" />
