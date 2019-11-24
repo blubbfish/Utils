@@ -10,15 +10,13 @@ namespace BlubbFish.Utils {
     private Dictionary<String, Dictionary<String, String>> inifile;
     private readonly FileSystemWatcher k;
     private readonly String filename;
-    private static List<String> search_path = new List<String>() {
+    private static readonly List<String> search_path = new List<String>() {
       Directory.GetCurrentDirectory()
     };
 
-    private static Dictionary<String, InIReader> instances = new Dictionary<String, InIReader>();
+    private static readonly Dictionary<String, InIReader> instances = new Dictionary<String, InIReader>();
 
-    public static void SetSearchPath(List<String> directorys) {
-      search_path.AddRange(directorys);
-    }
+    public static void SetSearchPath(List<String> directorys) => search_path.AddRange(directorys);
 
     public static Boolean ConfigExist(String filename) {
       foreach (String path in search_path) {
@@ -54,7 +52,7 @@ namespace BlubbFish.Utils {
         throw new ArgumentException(filename + " not found!");
       }
       this.k.Changed += new FileSystemEventHandler(this.ReadAgain);
-      LoadFile();
+      this.LoadFile();
     }
 
     /// <summary>
@@ -70,10 +68,7 @@ namespace BlubbFish.Utils {
       return instances[filename];
     }
 
-    private void ReadAgain(Object sender, EventArgs e)
-    {
-      this.LoadFile();
-    }
+    private void ReadAgain(Object sender, EventArgs e) => this.LoadFile();
 
     private void LoadFile()
     {
@@ -123,7 +118,7 @@ namespace BlubbFish.Utils {
       } else {
         List<String> ret = new List<String>();
         foreach (String item in this.inifile.Keys) {
-          ret.Add(item.Substring(1, item.Length - 2));
+          ret.Add(item[1..^1]);
         }
         return ret;
       }
@@ -147,15 +142,9 @@ namespace BlubbFish.Utils {
       this.Changed();
     }
 
-    public Dictionary<String, String> GetSection(String section) {
-      if(this.inifile.Keys.Contains(section)) {
-        return this.inifile[section];
-      }
-      if(this.inifile.Keys.Contains("["+section+"]")) {
-        return this.inifile["[" + section + "]"];
-      }
-      return new Dictionary<String, String>();
-    }
+    public Dictionary<String, String> GetSection(String section) => this.inifile.Keys.Contains(section) ? 
+      this.inifile[section] : this.inifile.Keys.Contains("[" + section + "]") ? 
+        this.inifile["[" + section + "]"] : new Dictionary<String, String>();
 
     /// <summary>
     /// Gibt einen einzelnen Wert zurück
@@ -168,12 +157,7 @@ namespace BlubbFish.Utils {
       if (!section.StartsWith("[")) {
         section = "[" + section + "]";
       }
-      if (this.inifile.Keys.Contains(section)) {
-        if (this.inifile[section].Keys.Contains(key)) {
-          return this.inifile[section][key];
-        }
-      }
-      return null;
+      return this.inifile.Keys.Contains(section) && this.inifile[section].Keys.Contains(key) ? this.inifile[section][key] : null;
     }
 
     /// <summary>
@@ -205,8 +189,8 @@ namespace BlubbFish.Utils {
     private void Changed()
     {
       this.k.Changed -= null;
-      SaveSettings();
-      LoadFile();
+      this.SaveSettings();
+      this.LoadFile();
       this.k.Changed += new FileSystemEventHandler(this.ReadAgain);
     }
 
@@ -215,7 +199,7 @@ namespace BlubbFish.Utils {
       StreamWriter file = new StreamWriter(this.filename);
       file.BaseStream.SetLength(0);
       file.BaseStream.Flush();
-      file.BaseStream.Seek(0, SeekOrigin.Begin);
+      _ = file.BaseStream.Seek(0, SeekOrigin.Begin);
       foreach (KeyValuePair<String, Dictionary<String, String>> cap in this.inifile) {
         file.WriteLine(cap.Key);
         foreach (KeyValuePair<String, String> sub in cap.Value) {
@@ -258,10 +242,11 @@ namespace BlubbFish.Utils {
       if (!this.inifile.Keys.Contains(name)) {
         return false;
       }
-      this.inifile.Remove(name);
+      _ = this.inifile.Remove(name);
       this.Changed();
       return false;
     }
+
     protected virtual void Dispose(Boolean disposing) {
       if (disposing) {
         this.k.Dispose();
@@ -269,7 +254,7 @@ namespace BlubbFish.Utils {
     }
 
     public void Dispose() {
-      Dispose(true);
+      this.Dispose(true);
       GC.SuppressFinalize(this);
     }
   }

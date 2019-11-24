@@ -113,10 +113,7 @@ namespace BlubbFish.Utils
     /// Menge der angegebenen Komandozeilen-Argumente
     /// </summary>
     /// <returns>Menge</returns>
-    public Int32 GetArgsLength()
-    {
-      return this.argList.Count;
-    }
+    public Int32 GetArgsLength() => this.argList.Count;
 
     /// <summary>
     /// Gibt zurück ob ein Argument angegeben wurde

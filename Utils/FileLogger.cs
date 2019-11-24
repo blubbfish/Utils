@@ -9,7 +9,7 @@ namespace BlubbFish.Utils
 {
   public class FileLogger
   {
-    private static Dictionary<String, FileLogger> instances = new Dictionary<String, FileLogger>();
+    private static readonly Dictionary<String, FileLogger> instances = new Dictionary<String, FileLogger>();
     private static String logDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
     private readonly StreamWriter file;
     private FileLogger(String filename, Boolean append)
@@ -18,7 +18,7 @@ namespace BlubbFish.Utils
       if (!File.Exists(filename)) {
         String folder = Path.GetDirectoryName(Path.GetFullPath(filename));
         if (!Directory.Exists(folder)) {
-          Directory.CreateDirectory(folder);
+          _ = Directory.CreateDirectory(folder);
         }
       }
       this.file = new StreamWriter(filename, append, Encoding.UTF8) {
@@ -40,11 +40,11 @@ namespace BlubbFish.Utils
       if (Directory.Exists(v)) {
         logDir = v;
       } else {
-        Directory.CreateDirectory(v);
+        _ = Directory.CreateDirectory(v);
         logDir = v;
       }
       if (logDir.Substring(logDir.Length - 1) != Path.DirectorySeparatorChar.ToString()) {
-        logDir = logDir + Path.DirectorySeparatorChar;
+        logDir += Path.DirectorySeparatorChar;
       }
     }
 
@@ -59,9 +59,6 @@ namespace BlubbFish.Utils
       this.file.WriteLine(text);
       this.file.Flush();
     }
-    public void SetLine(String text, DateTime d)
-    {
-      this.SetLine(d.ToString("[yyyy-MM-dd HH:mm:ss.ffff] ") + text);
-    }
+    public void SetLine(String text, DateTime d) => this.SetLine(d.ToString("[yyyy-MM-dd HH:mm:ss.ffff] ") + text);
   }
 }

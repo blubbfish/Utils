@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
-using System.Security;
-using System.Security.Permissions;
 using System.Text;
 
 namespace BlubbFish.Utils {
@@ -35,17 +32,10 @@ namespace BlubbFish.Utils {
     }
 
     private Boolean IsWritable(String filename) {
-      FileIOPermission writePermission = new FileIOPermission(FileIOPermissionAccess.Write, filename);
-      PermissionSet p = new PermissionSet(PermissionState.None);
-      p.AddPermission(writePermission);
-      if (!p.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet)) {
-        return false;
-      }
       try {
-        using (FileStream fstream = new FileStream(filename, FileMode.Append))
-        using (TextWriter writer = new StreamWriter(fstream)) {
-          writer.Write("");
-        }
+        using FileStream fstream = new FileStream(filename, FileMode.Append);
+        using TextWriter writer = new StreamWriter(fstream);
+        writer.Write("");
       } catch (UnauthorizedAccessException) {
         return false;
       }
@@ -91,11 +81,11 @@ namespace BlubbFish.Utils {
     public FileWriter(String path) : base(path) {
     }
 
-    public override Encoding Encoding { get { return Encoding.UTF8; } }
-    public override Boolean AutoFlush { get { return true; } set { base.AutoFlush = value; } }
+    public override Encoding Encoding => Encoding.UTF8;
+    public override Boolean AutoFlush { get => true; set => base.AutoFlush = value; }
 
     private void Write(String value, TextWriter origstream, ConsoleWriterEventArgs.ConsoleType type) {
-      String text = "";
+      String text;
       if (this.newline) {
         text = "[" + DateTime.Now.ToString("o") + "]-" + type.ToString() + ": " + value;
         this.newline = false;
@@ -108,25 +98,16 @@ namespace BlubbFish.Utils {
     }
 
     private void WriteLine(String value, TextWriter origstream, ConsoleWriterEventArgs.ConsoleType type) {
-      String text = "";
-      if (this.newline) {
-        text = "[" + DateTime.Now.ToString("o") + "]-" + type.ToString() + ": " + value;
-      } else {
-        text = value;
-      }
+      String text = this.newline ? "[" + DateTime.Now.ToString("o") + "]-" + type.ToString() + ": " + value : value;
       this.newline = true;
       origstream.WriteLine(text);
       base.WriteLine(text);
       base.Flush();
     }
 
-    internal void Write(Object sender, ConsoleWriterEventArgs e) {
-      this.Write(e.Value, e.Writer, e.StreamType);
-    }
+    internal void Write(Object sender, ConsoleWriterEventArgs e) => this.Write(e.Value, e.Writer, e.StreamType);
 
-    internal void WriteLine(Object sender, ConsoleWriterEventArgs e) {
-      this.WriteLine(e.Value, e.Writer, e.StreamType);
-    }
+    internal void WriteLine(Object sender, ConsoleWriterEventArgs e) => this.WriteLine(e.Value, e.Writer, e.StreamType);
   }
 
   internal class ConsoleWriterEventArgs : EventArgs {
@@ -155,7 +136,7 @@ namespace BlubbFish.Utils {
       this.streamtype = type;
     }
 
-    public override Encoding Encoding { get { return Encoding.UTF8; } }
+    public override Encoding Encoding => Encoding.UTF8;
     public override void Write(String value) {
       this.WriteEvent?.Invoke(this, new ConsoleWriterEventArgs(value, this.stream, this.streamtype));
       base.Write(value);

@@ -21,21 +21,17 @@ namespace BlubbFish.Utils
       /// Formates a LogMessage to a String
       /// </summary>
       /// <returns>Formated String</returns>
-      public override String ToString() {
-        return "[" + this.Date.ToString("R") + "]: " + this.Level.ToString() + " "+ this.Location + ", " + this.Message;
-      }
+      public override String ToString() => "[" + this.Date.ToString("R") + "]: " + this.Level.ToString() + " " + this.Location + ", " + this.Message;
       /// <summary>
       /// Formates a LogMessage to a String
       /// </summary>
       /// <param name="classNames">Enables the output of the location</param>
       /// <param name="timeStamps">Enables the output of the date</param>
       /// <returns>Formated String</returns>
-      public String ToString(Boolean classNames, Boolean timeStamps) {
-        return (timeStamps ? "[" + this.Date.ToString("R") + "]: " + this.Level.ToString() + " " : "") + (classNames ? this.Location + ", " : "") + this.Message;
-      }
+      public String ToString(Boolean classNames, Boolean timeStamps) => (timeStamps ? "[" + this.Date.ToString("R") + "]: " + this.Level.ToString() + " " : "") + (classNames ? this.Location + ", " : "") + this.Message;
     }
 
-    private List<LogObject> loglist = new List<LogObject>();
+    private readonly List<LogObject> loglist = new List<LogObject>();
 
     public delegate void LogEvent(Object sender, LogEventArgs e);
     public enum LogLevel : Int32 {
@@ -72,10 +68,7 @@ namespace BlubbFish.Utils
     /// <param name="location">Where the event arrives</param>
     /// <param name="message">The logmessage itselfs</param>
     /// <param name="level">Level of the message</param>
-    protected void AddLog(String location, String message, LogLevel level)
-    {
-      this.AddLog(location, message, level, DateTime.Now);
-    }
+    protected void AddLog(String location, String message, LogLevel level) => this.AddLog(location, message, level, DateTime.Now);
 
     /// <summary>
     /// Put a message in the log
@@ -87,20 +80,20 @@ namespace BlubbFish.Utils
     protected void AddLog(String location, String message, LogLevel level, DateTime date)
     {
       LogEventArgs e = new LogEventArgs(location, message, level, date);
-      if (EventDebug != null && level >= LogLevel.Debug) {
-        EventDebug(this, e);
+      if (level >= LogLevel.Debug) {
+        EventDebug?.Invoke(this, e);
       }
-      if (EventNotice != null && level >= LogLevel.Notice) {
-        EventNotice(this, e);
+      if (level >= LogLevel.Notice) {
+        EventNotice?.Invoke(this, e);
       }
-      if (EventInfo != null && level >= LogLevel.Info) {
-        EventInfo(this, e);
+      if (level >= LogLevel.Info) {
+        EventInfo?.Invoke(this, e);
       }
-      if (EventWarn != null && level >= LogLevel.Warn) {
-        EventWarn(this, e);
+      if (level >= LogLevel.Warn) {
+        EventWarn?.Invoke(this, e);
       }
-      if (EventError != null && level >= LogLevel.Error) {
-        EventError(this, e);
+      if (level >= LogLevel.Error) {
+        EventError?.Invoke(this, e);
       }
       EventLog?.Invoke(this, e);
 

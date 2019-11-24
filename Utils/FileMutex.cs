@@ -25,7 +25,9 @@ namespace BlubbFish.Utils
     public void SetName(String name)
     {
       String path = AppDomain.CurrentDomain.BaseDirectory;
-      this.filename = path + String.Join(String.Empty, Array.ConvertAll(new SHA512Managed().ComputeHash(Encoding.UTF8.GetBytes(name)), b => b.ToString("X2"))) + ".lock.txt";
+      SHA512Managed sha = new SHA512Managed();
+      this.filename = path + String.Join(String.Empty, Array.ConvertAll(sha.ComputeHash(Encoding.UTF8.GetBytes(name)), b => b.ToString("X2"))) + ".lock.txt";
+      sha.Dispose();
     }
 
     public Boolean Create()
@@ -35,7 +37,7 @@ namespace BlubbFish.Utils
       }
 
       this.file = new StreamWriter(this.filename);
-      InitFile();
+      this.InitFile();
       return File.Exists(this.filename) && this.file != null;
     }
 
@@ -64,7 +66,7 @@ namespace BlubbFish.Utils
     }
 
     public void Dispose() {
-      Dispose(true);
+      this.Dispose(true);
       GC.SuppressFinalize(this);
     }
   }

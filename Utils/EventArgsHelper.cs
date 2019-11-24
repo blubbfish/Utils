@@ -11,9 +11,7 @@ namespace BlubbFish.Utils {
   }
 
   public class UpdaterFailEventArgs : EventArgs {
-    public UpdaterFailEventArgs(Exception e) {
-      this.Except = e;
-    }
+    public UpdaterFailEventArgs(Exception e) => this.Except = e;
 
     public Exception Except { get; private set; }
   }

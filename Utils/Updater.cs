@@ -58,7 +58,7 @@ namespace BlubbFish.Utils {
       while (this.t.ThreadState == ThreadState.Running) { }
       if(exceuteUpdate) {
         if(File.Exists("update.bat")) {
-          System.Diagnostics.Process.Start("update.bat");
+          _ = System.Diagnostics.Process.Start("update.bat");
         }
       }
     }
@@ -90,6 +90,7 @@ namespace BlubbFish.Utils {
       xml.Flush();
       file.Flush();
       file.Close();
+      xml.Close();
     }
 
     /// <summary>
@@ -114,7 +115,9 @@ namespace BlubbFish.Utils {
       Thread.Sleep(1000);
       try {
         Stream stream = WebRequest.Create(this.url + "version.xml").GetResponse().GetResponseStream();
-        String content = new StreamReader(stream).ReadToEnd();
+        StreamReader sr = new StreamReader(stream);
+        String content = sr.ReadToEnd();
+        sr.Close();
         Boolean update = false;
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(content);

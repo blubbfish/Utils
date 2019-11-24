@@ -17,10 +17,7 @@ namespace BlubbFish.Utils {
 
     public static Object GetProperty(this Object o, String name) {
       PropertyInfo prop = o.GetType().GetProperty(name);
-      if (prop.CanRead) {
-        return prop.GetValue(o);
-      }
-      return null;
+      return prop.CanRead ? prop.GetValue(o) : null;
     }
 
     public static void SetProperty(this Object o, String name, String value) {
@@ -57,36 +54,17 @@ namespace BlubbFish.Utils {
       return false;
     }
 
-    public static Boolean HasAbstract(this Type o, Type type) {
-      if (o.BaseType == type) {
-        return true;
-      }
-      return false;
-    }
+    public static Boolean HasAbstract(this Type o, Type type) => o.BaseType == type;
     #endregion
 
     #region StringHelper
     public static String GetEnumDescription(Enum value) {
       FieldInfo fi = value.GetType().GetField(value.ToString());
-
       DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-      if (attributes != null && attributes.Length > 0) {
-        return attributes[0].Description;
-      } else {
-        return value.ToString();
-      }
+      return attributes != null && attributes.Length > 0 ? attributes[0].Description : value.ToString();
     }
 
-    public static String ToUpperLower(this String s) {
-      if (s.Length == 0) {
-        return "";
-      }
-      if (s.Length == 1) {
-        return s.ToUpper();
-      }
-      return s[0].ToString().ToUpper() + s.Substring(1).ToLower();
-    }
+    public static String ToUpperLower(this String s) => s.Length == 0 ? "" : s.Length == 1 ? s.ToUpper() : s[0].ToString().ToUpper() + s.Substring(1).ToLower();
 
     public static void WriteError(String text) {
       Console.ForegroundColor = ConsoleColor.Red;
