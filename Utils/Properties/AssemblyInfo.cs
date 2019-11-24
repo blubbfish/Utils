@@ -5,15 +5,18 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
+#if NETCOREAPP
+#else
 [assembly: AssemblyTitle("Utils")]
 [assembly: AssemblyDescription("Provides useful classes for other projects")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BlubbFish")]
 [assembly: AssemblyProduct("Utils")]
-[assembly: AssemblyCopyright("Copyright ©  2014 - 02.10.2018")]
+[assembly: AssemblyCopyright("Copyright © BlubbFish 2014 - 02.10.2018")]
 [assembly: AssemblyTrademark("BlubbFish")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("de-DE")]
+
 
 // Durch Festlegen von ComVisible auf "false" werden die Typen in dieser Assembly unsichtbar 
 // für COM-Komponenten. Wenn Sie auf einen Typ in dieser Assembly von 
@@ -35,6 +38,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.4.0")]
 [assembly: AssemblyFileVersion("1.4.0")]
+#endif
 
 /**
  * 1.4.0 Add Helper to Utils
