@@ -65,13 +65,13 @@ namespace BlubbFish.Utils {
     private void DisattachToFw() {
       this.stdout.WriteEvent -= this.fw.Write;
       this.stdout.WriteLineEvent -= this.fw.WriteLine;
-      this.errout.WriteEvent -= this.fw.WriteLine;
+      this.errout.WriteEvent -= this.fw.Write;
       this.errout.WriteLineEvent -= this.fw.WriteLine;
     }
     private void AttachToFw() {
       this.stdout.WriteEvent += this.fw.Write;
       this.stdout.WriteLineEvent += this.fw.WriteLine;
-      this.errout.WriteEvent += this.fw.WriteLine;
+      this.errout.WriteEvent += this.fw.Write;
       this.errout.WriteLineEvent += this.fw.WriteLine;
     }
   }
@@ -137,14 +137,13 @@ namespace BlubbFish.Utils {
     }
 
     public override Encoding Encoding => Encoding.UTF8;
-    public override void Write(String value) {
-      this.WriteEvent?.Invoke(this, new ConsoleWriterEventArgs(value, this.stream, this.streamtype));
-      base.Write(value);
-    }
-    public override void WriteLine(String value) {
-      this.WriteLineEvent?.Invoke(this, new ConsoleWriterEventArgs(value, this.stream, this.streamtype));
-      base.WriteLine(value);
-    }
+
+    public override void Write(String value) => this.WriteEvent?.Invoke(this, new ConsoleWriterEventArgs(value, this.stream, this.streamtype));
+    //base.Write(value);
+
+    public override void WriteLine(String value) => this.WriteLineEvent?.Invoke(this, new ConsoleWriterEventArgs(value, this.stream, this.streamtype));
+    //base.WriteLine(value);
+
     public event EventHandler<ConsoleWriterEventArgs> WriteEvent;
     public event EventHandler<ConsoleWriterEventArgs> WriteLineEvent;
   }
