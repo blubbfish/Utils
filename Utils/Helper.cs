@@ -44,6 +44,17 @@ namespace BlubbFish.Utils {
     }
     #endregion
 
+    #region FieldHelper
+    public static Object GetField(this Object o, String name) {
+      FieldInfo field = o.GetType().GetField(name);
+      return field.IsPublic ? field.GetValue(o) : null;
+    }
+    public static Object GetField(this Type o, String name) {
+      FieldInfo field = o.GetField(name);
+      return field.IsPublic ? field.GetValue(o) : null;
+    }
+    #endregion
+
     #region InterfaceHelper
     public static Boolean HasInterface(this Type o, Type interf) {
       foreach (Type item in o.GetInterfaces()) {
