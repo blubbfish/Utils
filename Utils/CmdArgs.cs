@@ -14,19 +14,25 @@ namespace BlubbFish.Utils
     #region Classes
     public struct VaildArguments
     {
-      public VaildArguments(ArgLength length, Boolean required)
+      public VaildArguments(ArgLength length, Boolean required, String @default = "", String description = "")
       {
         this.Required = required;
         this.Length = length;
+        this.Description = description;
+        this.@Default = @default;
       }
-      public VaildArguments(ArgLength length)
+      public VaildArguments(ArgLength length, String @default = "", String description = "")
       {
         this.Required = false;
         this.Length = length;
+        this.Description = description;
+        this.@Default = @default;
       }
 
       public ArgLength Length { get; private set; }
       public Boolean Required { get; private set; }
+      public String Description { get; private set; }
+      public String Default { get; private set; }
     }
     private struct ArgTouple
     {
@@ -107,6 +113,11 @@ namespace BlubbFish.Utils
           this.argList.Add(arg);
         }
       }
+      foreach(KeyValuePair<String, VaildArguments> item in this.argsPosible) {
+        if(!this.HasArgumentType(item.Key) && item.Value.Length == ArgLength.Touple && item.Value.Default != "") {
+          this.argList.Add(new ArgTouple(item.Key, item.Value.Default));
+        }
+      }
     }
 
     /// <summary>
@@ -162,7 +173,10 @@ namespace BlubbFish.Utils
       String opt = "";
       foreach (KeyValuePair<String, VaildArguments> item in this.argsPosible) {
         if (item.Value.Required) {
-          req += item.Key + " " + ((item.Value.Length == ArgLength.Touple) ? " [data]\n" : "\n");
+          req += item.Key + " " + ((item.Value.Length == ArgLength.Touple) ? (item.Value.Default != "" ? " " + item.Value.Default + "\n" : " [data]\n") : "\n");
+          if(item.Value.Description != "") {
+            req += "\t" + item.Value.Description + "\n";
+          }
         }
       }
       if (req != "") {
@@ -170,7 +184,10 @@ namespace BlubbFish.Utils
       }
       foreach (KeyValuePair<String, VaildArguments> item in this.argsPosible) {
         if (!item.Value.Required) {
-          opt += item.Key + " " + ((item.Value.Length == ArgLength.Touple) ? " [data]\n" : "\n");
+          opt += item.Key + " " + ((item.Value.Length == ArgLength.Touple) ? (item.Value.Default != "" ? " " + item.Value.Default + "\n" : " [data]\n") : "\n");
+          if (item.Value.Description != "") {
+            opt += "\t" + item.Value.Description + "\n";
+          }
         }
       }
       if (opt != "") {
