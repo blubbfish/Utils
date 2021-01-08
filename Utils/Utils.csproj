@@ -1,72 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FAC8CE64-BF13-4ECE-8097-AEB5DD060098}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlubbFish.Utils</RootNamespace>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Utils</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <RootNamespace>BlubbFish.Utils</RootNamespace>
+    <Description>Provides useful classes for other projects</Description>
+    <Company>BlubbFish</Company>
+    <Authors>BlubbFish</Authors>
+    <PackageId>Utils.BlubbFish</PackageId>
+    <Copyright>Copyright © BlubbFish 2014 - 02.10.2018</Copyright>
+    <AssemblyVersion>1.4.0</AssemblyVersion>
+    <FileVersion>1.4.0</FileVersion>
+    <NeutralLanguage>de-DE</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>http://git.blubbfish.net/vs_utils/Utils</PackageProjectUrl>
+    <RepositoryUrl>http://git.blubbfish.net/vs_utils/Utils.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1.4.0</Version>
+    <PackageReleaseNotes>1.4.0 Add Helper to Utils</PackageReleaseNotes>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Content Include="../CHANGELOG.md" />
+	<Content Include="../CONTRIBUTING.md" />
+	<Content Include="../LICENSE" />
+	<Content Include="../README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CmdArgs.cs" />
-    <Compile Include="EventArgsHelper.cs" />
-    <Compile Include="FileLogger.cs" />
-    <Compile Include="FileMutex.cs" />
-    <Compile Include="Helper.cs" />
-    <Compile Include="InIReader.cs" />
-    <Compile Include="OwnController.cs" />
-    <Compile Include="OwnModel.cs" />
-    <Compile Include="OwnObject.cs" />
-    <Compile Include="OwnView.cs" />
-    <Compile Include="ProgramLogger.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Updater.cs" />
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\CHANGELOG.md" />
-	<Content Include="..\CONTRIBUTING.md" />
-	<Content Include="..\LICENSE" />
-	<Content Include="..\README.md" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
