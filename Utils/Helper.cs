@@ -53,6 +53,10 @@ namespace BlubbFish.Utils {
       FieldInfo field = o.GetField(name);
       return field.IsPublic ? field.GetValue(o) : null;
     }
+    public static T GetEvent<T>(this Object o, String name) {
+      FieldInfo field = o.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
+      return (T)field?.GetValue(o);
+    }
     #endregion
 
     #region InterfaceHelper
@@ -75,7 +79,7 @@ namespace BlubbFish.Utils {
       return attributes != null && attributes.Length > 0 ? attributes[0].Description : value.ToString();
     }
 
-    public static String ToUpperLower(this String s) => s.Length == 0 ? "" : s.Length == 1 ? s.ToUpper() : s[0].ToString().ToUpper() + s.Substring(1).ToLower();
+    public static String ToUpperLower(this String s) => s.Length == 0 ? "" : s.Length == 1 ? s.ToUpper() : s[0].ToString().ToUpper() + s[1..].ToLower();
 
     public static void WriteError(String text) {
       Console.ForegroundColor = ConsoleColor.Red;
