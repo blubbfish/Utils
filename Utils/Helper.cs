@@ -49,10 +49,12 @@ namespace BlubbFish.Utils {
       FieldInfo field = o.GetType().GetField(name);
       return field.IsPublic ? field.GetValue(o) : null;
     }
+
     public static Object GetField(this Type o, String name) {
       FieldInfo field = o.GetField(name);
       return field.IsPublic ? field.GetValue(o) : null;
     }
+
     public static T GetEvent<T>(this Object o, String name) {
       FieldInfo field = o.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
       return (T)field?.GetValue(o);
