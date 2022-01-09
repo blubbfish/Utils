@@ -43,7 +43,7 @@ namespace BlubbFish.Utils
         _ = Directory.CreateDirectory(v);
         logDir = v;
       }
-      if (logDir.Substring(logDir.Length - 1) != Path.DirectorySeparatorChar.ToString()) {
+      if (logDir[^1..] != Path.DirectorySeparatorChar.ToString()) {
         logDir += Path.DirectorySeparatorChar;
       }
     }

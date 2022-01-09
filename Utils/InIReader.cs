@@ -96,7 +96,7 @@ namespace BlubbFish.Utils {
         } else {
           if (line != "" && cap != "") {
             String key = line.Substring(0, line.IndexOf('='));
-            String value = line.Substring(line.IndexOf('=') + 1);
+            String value = line[(line.IndexOf('=') + 1)..];
             sub.Add(key, value);
           }
         }
