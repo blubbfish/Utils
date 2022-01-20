@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.1 - 2022-01-20 - ProgrammLogger Fixed
+### New Features
+### Bugfixes
+* Unhandled exception. System.IO.IOException: The file '/var/log/zwaybot/debug.log' already exists.
+### Changes
+
 ## 1.6.0 - 2022-01-09 - HttpEndpoint added
 ### New Features
 * Add HttpEndpoint

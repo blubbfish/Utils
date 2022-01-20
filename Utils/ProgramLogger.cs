@@ -26,7 +26,7 @@ namespace BlubbFish.Utils {
         Console.Error.WriteLine("Cannot write to " + file);
         throw new ArgumentException("Cannot write to " + file);
       }
-      this.fw = new FileWriter(file);
+      this.fw = new FileWriter(file, false);
       this.stdout = new ConsoleWriter(Console.Out, ConsoleWriterEventArgs.ConsoleType.Info);
       this.errout = new ConsoleWriter(Console.Error, ConsoleWriterEventArgs.ConsoleType.Error);
     }
@@ -53,13 +53,30 @@ namespace BlubbFish.Utils {
       this.DisattachToFw();
       this.fw.Close();
       if(new FileInfo(this.loggerfile).Length > 0) {
-        File.Move(this.loggerfile, file);
+        if(File.Exists(file)) {
+          this.FileCopy(this.loggerfile, file);
+          File.Delete(this.loggerfile);
+        } else {
+          File.Move(this.loggerfile, file);
+        }
       } else {
         File.Delete(this.loggerfile);
       }
       this.loggerfile = file;
-      this.fw = new FileWriter(this.loggerfile);
+      this.fw = new FileWriter(this.loggerfile, true);
       this.AttachToFw();
+    }
+
+    private void FileCopy(String source, String target) {
+      using FileStream fread = new FileStream(source, FileMode.Open);
+      using FileStream fwrite = new FileStream(target, FileMode.Create);
+      using TextReader reader = new StreamReader(fread);
+      using TextWriter writer = new StreamWriter(fwrite);
+
+      writer.Write(reader.ReadToEnd());
+      writer.Flush();
+      writer.Close();
+      reader.Close();
     }
 
     private void DisattachToFw() {
@@ -78,7 +95,7 @@ namespace BlubbFish.Utils {
 
   internal class FileWriter : StreamWriter {
     private Boolean newline = true;
-    public FileWriter(String path) : base(path) {
+    public FileWriter(String path, Boolean append) : base(path, append) {
     }
 
     public override Encoding Encoding => Encoding.UTF8;
