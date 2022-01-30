@@ -31,8 +31,7 @@ namespace BlubbFish.Utils {
       return false;
     }
 
-    private InIReader(String filename)
-    {
+    private InIReader(String filename) {
       foreach (String path in search_path) {
         if (File.Exists(path + Path.DirectorySeparatorChar + filename)) {
           this.filename = path + Path.DirectorySeparatorChar + filename;
@@ -60,8 +59,7 @@ namespace BlubbFish.Utils {
     /// </summary>
     /// <param name="filename">Dateiname</param>
     /// <returns></returns>
-    public static InIReader GetInstance(String filename)
-    {
+    public static InIReader GetInstance(String filename) {
       if (!instances.Keys.Contains(filename)) {
         instances.Add(filename, new InIReader(filename));
       }
@@ -70,8 +68,7 @@ namespace BlubbFish.Utils {
 
     private void ReadAgain(Object sender, EventArgs e) => this.LoadFile();
 
-    private void LoadFile()
-    {
+    private void LoadFile() {
       this.inifile = new Dictionary<String, Dictionary<String, String>>();
       StreamReader file = new StreamReader(this.filename);
       List<String> buf = new List<String>();
@@ -152,12 +149,11 @@ namespace BlubbFish.Utils {
     /// <param name="section">Name der Sektion</param>
     /// <param name="key">Name des Wertes</param>
     /// <returns></returns>
-    public String GetValue(String section, String key)
-    {
+    public String GetValue(String section, String key, String @default = null) {
       if (!section.StartsWith("[")) {
         section = "[" + section + "]";
       }
-      return this.inifile.Keys.Contains(section) && this.inifile[section].Keys.Contains(key) ? this.inifile[section][key] : null;
+      return this.inifile.Keys.Contains(section) && this.inifile[section].Keys.Contains(key) ? this.inifile[section][key] : @default;
     }
 
     /// <summary>

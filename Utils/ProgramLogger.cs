@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace BlubbFish.Utils {
@@ -9,8 +10,8 @@ namespace BlubbFish.Utils {
     private ConsoleWriter errout;
     private String loggerfile;
 
-    public ProgramLogger() {
-      this.loggerfile = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "output.log";
+    public ProgramLogger(String path = null) {
+      this.loggerfile = path ?? Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "output.log";
       this.Init(this.loggerfile);
       this.AttachToFw();
       this.SetOutputs();
@@ -26,7 +27,7 @@ namespace BlubbFish.Utils {
         Console.Error.WriteLine("Cannot write to " + file);
         throw new ArgumentException("Cannot write to " + file);
       }
-      this.fw = new FileWriter(file, false);
+      this.fw = new FileWriter(FileWriter.GetFileSteam(file, false));
       this.stdout = new ConsoleWriter(Console.Out, ConsoleWriterEventArgs.ConsoleType.Info);
       this.errout = new ConsoleWriter(Console.Error, ConsoleWriterEventArgs.ConsoleType.Error);
     }
@@ -63,8 +64,13 @@ namespace BlubbFish.Utils {
         File.Delete(this.loggerfile);
       }
       this.loggerfile = file;
-      this.fw = new FileWriter(this.loggerfile, true);
+      this.fw = new FileWriter(FileWriter.GetFileSteam(this.loggerfile, true));
       this.AttachToFw();
+    }
+
+    public void Dispose() {
+      this.DisattachToFw();
+      this.fw.Dispose();
     }
 
     private void FileCopy(String source, String target) {
@@ -95,8 +101,10 @@ namespace BlubbFish.Utils {
 
   internal class FileWriter : StreamWriter {
     private Boolean newline = true;
-    public FileWriter(String path, Boolean append) : base(path, append) {
+    public FileWriter(FileStream fs) : base(fs) {
     }
+
+    public static FileStream GetFileSteam(String path, Boolean append) => File.Open(path, append ? FileMode.Append : FileMode.Create, FileAccess.Write, RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? FileShare.Write : FileShare.ReadWrite);
 
     public override Encoding Encoding => Encoding.UTF8;
     public override Boolean AutoFlush { get => true; set => base.AutoFlush = value; }

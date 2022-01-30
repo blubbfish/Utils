@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.2 - 2022-01-30 - ProgrammLogger improved
+### New Features
+* ProgrammLogger can now have a path while init, so not need to move the file
+* Make it possible that two instances can use the same logfile
+* IniReader GetValue can now have a default that returns if no setting is found
+### Bugfixes
+### Changes
+* Codingstyles
+
 ## 1.6.1 - 2022-01-20 - ProgrammLogger Fixed
 ### New Features
 ### Bugfixes
